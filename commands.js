@@ -31,9 +31,7 @@ var processMessage = function(bot, from, to, message) {
     var tokens = message.split(' ');
     if(!_.isArray(tokens) || tokens[0] !== invoke_string) { return; }
     if(commands.hasOwnProperty(tokens[1])) {
-        var joinedTokens = _.clone(tokens);
-        joinedTokens.shift();
-        joinedTokens.shift();
+        var joinedTokens = tokens.slice(2);
         joinedTokens = joinedTokens.join(' ');
 
         commands[tokens[1]]({
