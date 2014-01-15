@@ -10,7 +10,9 @@ var connection_string = util.format(
     config.mongo.port,
     config.mongo.database
 );
-
+if(connection_string.indexOf("localhost") !== -1 ) {
+    connection_string = connection_string.replace('undefined:undefined@', '');
+};
 mongoose.connect(connection_string);
 
 var IRCLog = mongoose.model('IRCLog', {
