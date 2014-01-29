@@ -5,7 +5,8 @@ var irc     = require('irc'),
     cmds    = require('./commands');
 
 var client = new irc.Client(config.irc.server, config.irc.nick, {
-    channels: config.irc.channels
+    channels: config.irc.channels,
+    password: config.irc.password
 });
 
 client.addListener('error', function(message) {
