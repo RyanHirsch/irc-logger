@@ -1,5 +1,5 @@
 console.log('Loading join.js');
-module.exports = function(options) {
+exports.message = function(options) {
     var bot = options.bot;
     var message = options.message;
 

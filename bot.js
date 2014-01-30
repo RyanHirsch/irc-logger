@@ -15,14 +15,11 @@ client.addListener('error', function(message) {
 
 client.addListener('message', function(from, to, message) {
     console.log(util.format('%s => %s: %s', from, to, message));
-    cmds.processMessage(this, from, to, message);
-    db.log.add({
-        ts:         new Date(),
-        server:     this.opt.server,
-        channel:    to,
-        nick:       from,
-        message:    message
-    });
+    cmds.process('message', this, from, to, message);
+});
+
+client.addListener('pm', function(from, message) {
+    cmds.process('pm', this, from, client.nick, message);
 });
 
 client.addListener('pm', function(from, message) {
