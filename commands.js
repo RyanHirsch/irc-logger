@@ -36,9 +36,22 @@ var loadModulesFrom = function(directory) {
         _.forEach(files, function(file) {
             // join, leave, quit
             var fileName = file.substring(0, file.length - 3)
+            var importedCommand = require('./' + directory + '/' + fileName);
 
-            commands[fileName] = require('./' + directory + '/' + fileName);
+            if(fileName === "all") {
+                commands[fileName] = importedCommand;
+            }
+            else {
+                _.forEach(['message', 'pm'], function(eventType) {
+                    if(importedCommand.hasOwnProperty(eventType)) {
+                        commands[eventType][fileName] = importedCommand[eventType];
+                    }
+                });
+            }
         });
+
+
+        console.log(commands);
     });
 };
 
@@ -68,9 +81,9 @@ var process = function(eventType, bot, from, to, message) {
         });
     });
 
-    if(!_.isArray(tokens) || !(tokens[0] === invoke_string || isToMe(bot.nick, tokens[0]))) { return; }
+    if(!_.isArray(tokens) || !(eventType === 'pm' || tokens[0] === invoke_string || isToMe(bot.nick, tokens[0]))) { return; }
 
-    if(commands[eventType].hasOwnProperty(tokens[1])) {
+    if( commands[eventType].hasOwnProperty(tokens[1]) ) {
         console.log('calling: commands.' + eventType + '.' + tokens[1]);
 
         var joinedTokens = tokens.slice(2).join(' ');
@@ -83,8 +96,18 @@ var process = function(eventType, bot, from, to, message) {
             message: joinedTokens
         });
     }
-    else {
-        // bot.say(to, "sorry I don't support " + tokens[1]);
+    else if (eventType === 'pm' && commands[eventType].hasOwnProperty(tokens[0])){
+        console.log('calling: commands.' + eventType + '.' + tokens[0]);
+
+        var joinedTokens = tokens.slice(1).join(' ');
+
+        commands[eventType][tokens[0]]({
+            bot: bot,
+            from: from,
+            to: to,
+            fullMessage: message,
+            message: joinedTokens
+        });
     }
 }
 
@@ -96,6 +119,7 @@ var process = function(eventType, bot, from, to, message) {
 // }
 
 loadModulesFrom('./commands');
+
 exports.process = process;
 exports.rehash = function() { rehash('commands'); };
 
