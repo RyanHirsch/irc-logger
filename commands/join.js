@@ -1,25 +1,25 @@
 console.log('Loading join.js');
 var join = function(options) {
     var bot = options.bot;
-    var message = options.message;
+    var text = options.text;
 
-    if(message.substr(0,1) !== '#') {
-        bot.say(options.to, message + " doesn't seem like a valid channel to me.");
+    if(text.substr(0,1) !== '#') {
+        bot.say(options.to, text + " doesn't seem like a valid channel to me.");
     }
     else {
-        bot.join(message);
+        bot.join(text);
     }
 };
 
 var joinPM = function(options) {
     var bot = options.bot;
-    var message = options.message;
+    var text = options.text;
 
-    if(message.substr(0,1) !== '#') {
-        bot.say(options.from, message + " doesn't seem like a valid channel to me.");
+    if(text.substr(0,1) !== '#') {
+        bot.say(options.from, text + " doesn't seem like a valid channel to me.");
     }
     else {
-        bot.join(message);
+        bot.join(text);
     }
 };
 

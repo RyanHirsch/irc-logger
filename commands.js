@@ -1,6 +1,8 @@
-var _ = require('lodash'),
-    fs = require('fs');
+var _   = require('lodash'),
+    fs  = require('fs'),
+    Q   = require('q');;
 var invoke_string = '!log';
+
 var commands = base_commands = {
     all: {
         message: [],
@@ -12,9 +14,12 @@ var commands = base_commands = {
 
 // rehash and reload our commands
 var rehash = function(directory) {
+    if(typeof directory === 'undefined') {
+        directory = 'commands';
+    }
     var path = __dirname + '/' + directory;
     clearCache(path);
-    loadModulesFrom(directory);
+    return loadModulesFrom(path);
 };
 
 var clearCache = function(path) {
@@ -22,21 +27,24 @@ var clearCache = function(path) {
 
     _.forEach(require.cache, function(item) {
         if(item.id.match(hashMatch)) {
-            console.log(item.id);
             delete require.cache[item.id];
         }
     });
 };
 
 var loadModulesFrom = function(directory) {
+    var deferred = Q.defer();
     fs.readdir(directory, function(err, files) {
-        if(err) console.log('ERROR: ' + err);
+        if(err) {
+            console.error('ERROR: ' + err);
+            deferred.reject(err);
+        }
 
         commands = base_commands;
         _.forEach(files, function(file) {
             // join, leave, quit
             var fileName = file.substring(0, file.length - 3)
-            var importedCommand = require('./' + directory + '/' + fileName);
+            var importedCommand = require(/*'./' + */directory + '/' + fileName);
 
             if(fileName === "all") {
                 commands[fileName] = importedCommand;
@@ -49,10 +57,9 @@ var loadModulesFrom = function(directory) {
                 });
             }
         });
-
-
-        console.log(commands);
+        deferred.resolve(commands);
     });
+    return deferred.promise;
 };
 
 var isToMe = function(bot, firstToken) {
@@ -66,34 +73,33 @@ var isToMe = function(bot, firstToken) {
     }
 };
 
-var process = function(eventType, bot, from, to, message) {
+var process = function(eventType, bot, from, to, text, message) {
     console.log(eventType);
     
-    var tokens = message.split(' ');
+    var tokens = text.split(' ');
 
     _.forEach(commands.all[eventType], function(fn) {
-        console.log('calling: commands.all.' + eventType);
         fn({
             bot: bot,
             from: from,
             to: to,
-            fullMessage: message
+            text: text,
+            message: message
         });
     });
 
-    if(!_.isArray(tokens) || !(eventType === 'pm' || tokens[0] === invoke_string || isToMe(bot.nick, tokens[0]))) { return; }
+    if(!_.isArray(tokens) || !(tokens[0] === invoke_string)) { return; }
 
     if( commands[eventType].hasOwnProperty(tokens[1]) ) {
-        console.log('calling: commands.' + eventType + '.' + tokens[1]);
-
         var joinedTokens = tokens.slice(2).join(' ');
 
         commands[eventType][tokens[1]]({
             bot: bot,
             from: from,
             to: to,
-            fullMessage: message,
-            message: joinedTokens
+            text: text,
+            command: joinedTokens,
+            message: message
         });
     }
     else if (eventType === 'pm' && commands[eventType].hasOwnProperty(tokens[0])){
@@ -105,8 +111,9 @@ var process = function(eventType, bot, from, to, message) {
             bot: bot,
             from: from,
             to: to,
-            fullMessage: message,
-            message: joinedTokens
+            text: text,
+            message: message,
+            command: joinedTokens
         });
     }
 }
@@ -118,9 +125,10 @@ var process = function(eventType, bot, from, to, message) {
 //    exports._isToMe = isToMe;
 // }
 
-loadModulesFrom('./commands');
+// loadModulesFrom('./commands');
+// rehash();
 
-exports.process = process;
-exports.rehash = function() { rehash('commands'); };
+exports.process     = process;
+exports.rehash      = rehash;
 
 // !log leave <channel>
