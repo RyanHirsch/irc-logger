@@ -48,15 +48,13 @@ describe('Commands', function() {
     });
 
     describe('rehash', function() {
-        it('should update our load timestamp', function(done) {
-            console.log(loaded_commands.message.load);
+        it('should reload our timestamp function', function(done) {
             var firstLoad = getMilliseconds(loaded_commands.message.load);
             commands.rehash('test/test_commands').then(function(cmds) {
                 var reloadDuration = getMilliseconds(cmds.message.load) - firstLoad;
-                console.log(reloadDuration);
                 var nowDuration = now() - getMilliseconds(cmds.message.load);
-                console.log(nowDuration);
-                expect(duration).to.be.above(1);
+                expect(reloadDuration).to.be.above(1);
+                expect(reloadDuration).to.be.above(nowDuration);
                 done();
             });
         });
