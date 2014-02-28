@@ -61,7 +61,7 @@ describe('Commands', function() {
     });
 
     describe('processing', function() {
-        describe('message "!log t"', function() {
+        describe('message "!log t_action"', function() {
             var allMessage;
             before(function () {
                 loaded_commands.message.t_action = sinon.spy();
