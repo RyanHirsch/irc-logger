@@ -1,6 +1,7 @@
 var _   = require('lodash'),
     fs  = require('fs'),
-    Q   = require('q');;
+    Q   = require('q');
+
 var invoke_string = '!log';
 
 var commands = base_commands = {
@@ -74,8 +75,6 @@ var isToMe = function(bot, firstToken) {
 };
 
 var process = function(eventType, bot, from, to, text, message) {
-    console.log(eventType);
-    
     var tokens = text.split(' ');
 
     _.forEach(commands.all[eventType], function(fn) {

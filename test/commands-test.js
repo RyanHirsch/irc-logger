@@ -59,4 +59,33 @@ describe('Commands', function() {
             });
         });
     });
+
+    describe('processing', function() {
+        describe('message "!log t"', function() {
+            var allMessage;
+            before(function () {
+                loaded_commands.message.t_action = sinon.spy();
+                loaded_commands.message.s_action = sinon.spy();
+
+                allMessage_one = sinon.spy();
+                loaded_commands.all.message.push(allMessage_one)
+
+                allMessage_two = sinon.spy();
+                loaded_commands.all.message.push(allMessage_two);
+
+                commands.process('message', undefined, undefined, undefined, '!log t_action')
+            });
+
+            it('should call t_action', function() {
+                expect(loaded_commands.message.t_action.called).to.equal(true);
+            });
+            it('should not call s_action', function() {
+                expect(loaded_commands.message.s_action.called).to.equal(false);
+            });
+            it('should call all', function() {
+                expect(allMessage_one.called).to.equal(true);
+                expect(allMessage_two.called).to.equal(true);
+            });
+        });
+    });
 });
