@@ -1,12 +1,12 @@
-var irc     = require('irc'),
-    config  = require('./config.json'),
-    util    = require('util'),
-    db      = require('./db'),
-    cmds    = require('./commands');
+var irc         = require('irc'),
+    ircConfig   = require('./config/irc.json'),
+    util        = require('util'),
+    db          = require('./db'),
+    cmds        = require('./commands');
 
-var client = new irc.Client(config.irc.server, config.irc.nick, {
-    channels: config.irc.channels,
-    password: config.irc.password,
+var client = new irc.Client(ircConfig.server, ircConfig.nick, {
+    channels: ircConfig.channels,
+    password: ircConfig.password,
     debug: true
 });
 

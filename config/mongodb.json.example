@@ -1,0 +1,7 @@
+{
+    "user"              : undefined,
+    "password"          : undefined,
+    "hostname"          : "localhost",
+    "port"              : "27017",
+    "database"          : "irc"
+}

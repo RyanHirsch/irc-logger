@@ -1,18 +1,18 @@
-var mongoose = require('mongoose'),
-    util = require('util'),
-    config = require('./config.json');
+var mongoose    = require('mongoose'),
+    util        = require('util'),
+    mongoConfig = require('./config/mongodb.json');
 
 var connection_string = util.format(
     'mongodb://%s:%s@%s:%d/%s',
-    config.mongo.user,
-    config.mongo.password,
-    config.mongo.hostname,
-    config.mongo.port,
-    config.mongo.database
+    mongoConfig.user,
+    mongoConfig.password,
+    mongoConfig.hostname,
+    mongoConfig.port,
+    mongoConfig.database
 );
 if(connection_string.indexOf("localhost") !== -1 ) {
     connection_string = connection_string.replace('undefined:undefined@', '');
-};
+}
 mongoose.connect(connection_string);
 
 var IRCLog = mongoose.model('IRCLog', {

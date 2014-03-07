@@ -3,8 +3,7 @@ var _   = require('lodash'),
     Q   = require('q');
 
 var invoke_string = '!log';
-
-var commands = base_commands = {
+var commands = {
     all: {
         message: [],
         pm: []
@@ -12,6 +11,7 @@ var commands = base_commands = {
     message: {},
     pm: {}
 };
+var base_commands = commands;
 
 // rehash and reload our commands
 var rehash = function(directory) {
@@ -44,7 +44,7 @@ var loadModulesFrom = function(directory) {
         commands = base_commands;
         _.forEach(files, function(file) {
             // join, leave, quit
-            var fileName = file.substring(0, file.length - 3)
+            var fileName = file.substring(0, file.length - 3);
             var importedCommand = require(/*'./' + */directory + '/' + fileName);
 
             if(fileName === "all") {
@@ -64,7 +64,7 @@ var loadModulesFrom = function(directory) {
 };
 
 var isToMe = function(bot, firstToken) {
-    var m = new RegExp('^' + bot + '[:,\-]?', 'gi');
+    var m = new RegExp('^' + bot + '[:,-]?', 'gi');
 
     if(firstToken.match(m)) {
         return true;
@@ -75,7 +75,8 @@ var isToMe = function(bot, firstToken) {
 };
 
 var process = function(eventType, bot, from, to, text, message) {
-    var tokens = text.split(' ');
+    var tokens = text.split(' '),
+        joinedTokens;
 
     _.forEach(commands.all[eventType], function(fn) {
         fn({
@@ -87,10 +88,10 @@ var process = function(eventType, bot, from, to, text, message) {
         });
     });
 
-    if(!_.isArray(tokens) || !(tokens[0] === invoke_string)) { return; }
+    if(!_.isArray(tokens) || (tokens[0] !== invoke_string)) { return; }
 
     if( commands[eventType].hasOwnProperty(tokens[1]) ) {
-        var joinedTokens = tokens.slice(2).join(' ');
+        joinedTokens = tokens.slice(2).join(' ');
 
         commands[eventType][tokens[1]]({
             bot: bot,
@@ -104,7 +105,7 @@ var process = function(eventType, bot, from, to, text, message) {
     else if (eventType === 'pm' && commands[eventType].hasOwnProperty(tokens[0])){
         console.log('calling: commands.' + eventType + '.' + tokens[0]);
 
-        var joinedTokens = tokens.slice(1).join(' ');
+        joinedTokens = tokens.slice(1).join(' ');
 
         commands[eventType][tokens[0]]({
             bot: bot,
@@ -115,7 +116,7 @@ var process = function(eventType, bot, from, to, text, message) {
             command: joinedTokens
         });
     }
-}
+};
 
 // if (process.env.NODE_ENV === "test") {
 //    exports._rehash = rehash;

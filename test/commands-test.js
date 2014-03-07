@@ -16,7 +16,7 @@ var getSeconds = function(date) {
 
 var getMilliseconds = function(date) {
     return date.getTime();
-}
+};
 
 describe('Commands', function() {
     var loaded_commands = {};
@@ -68,12 +68,12 @@ describe('Commands', function() {
                 loaded_commands.message.s_action = sinon.spy();
 
                 allMessage_one = sinon.spy();
-                loaded_commands.all.message.push(allMessage_one)
+                loaded_commands.all.message.push(allMessage_one);
 
                 allMessage_two = sinon.spy();
                 loaded_commands.all.message.push(allMessage_two);
 
-                commands.process('message', undefined, undefined, undefined, '!log t_action')
+                commands.process('message', undefined, undefined, undefined, '!log t_action');
             });
 
             it('should call t_action', function() {
