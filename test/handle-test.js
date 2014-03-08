@@ -1,9 +1,18 @@
 process.env.NODE_ENV = 'test';
-
+/*
+{
+    bot: bot,
+    from: from,
+    to: to,
+    text: text,
+    command: joinedTokens,
+    message: message
+}
+*/
 var sinon       = require('sinon'),
     chai        = require('chai'),
     expect      = chai.expect,
-    handle      = require('../handle.js'),
+    handle      = require('../lib/handle'),
     Q           = require('q');
 
 describe('Handle', function() {
